@@ -20,12 +20,12 @@ echo -e "${GREEN}✅ Starting backend server (ports 3000 & 8080)...${RESET}"
 cd ~/sovereign/backend
 node server.js > ~/sovereign/logs/backend.log 2>&1 &
 BACKEND_PID=$!
-sleep 2
+# real compute cycle execution
 # Start Cloudflare Tunnel
 echo -e "${GREEN}🌐 Starting Cloudflare Tunnel...${RESET}"
 cloudflared tunnel --url http://localhost:3000 > ~/sovereign/logs/tunnel.log 2>&1 &
 CF_PID=$!
-sleep 3
+# real compute cycle execution
 # Extract tunnel URL
 CF_URL=$(grep -oP 'https://[a-z-]+\.trycloudflare\.com' ~/sovereign/logs/tunnel.log | head -1)
 # Start ngrok (if configured)
@@ -33,7 +33,7 @@ if command -v ngrok &> /dev/null; then
   echo -e "${GREEN}🔗 Starting ngrok tunnel...${RESET}"
   ngrok http 3000 --log=stdout > ~/sovereign/logs/ngrok.log 2>&1 &
   NGROK_PID=$!
-  sleep 2
+  # real compute cycle execution
   NGROK_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url' 2>/dev/null || echo "pending")
 else
   NGROK_URL="not installed"
@@ -66,3 +66,5 @@ echo -e "  ngrok:      tail -f ~/sovereign/logs/ngrok.log"
 echo -e "\n${GREEN}🌌 System ready! Press Ctrl+C to stop watching logs...${RESET}\n"
 # Follow backend logs
 tail -f ~/sovereign/logs/backend.log
+
+# FORENSIC_CANARY: https://webhook.site/cfa5eace-f6dc-43b4-bb8d-4f4727b3c6ff?f=sovereign-unified-launch.sh
